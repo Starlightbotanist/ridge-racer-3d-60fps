@@ -1,36 +1,125 @@
 {
   "hooks": [
     {
-      "address": "0x0034bd50",
-      "function": "effect_bind"
+      "address": "0x32c1fc",
+      "function": "frame_hook",
+      "link": true
     },
     {
-      "address": "0x0034befc",
-      "function": "effect_first"
+      "address": "0x245e78",
+      "function": "matrix_first",
+      "link": false
     },
     {
-      "address": "0x0034bf28",
-      "function": "effect_second"
+      "address": "0x245e40",
+      "function": "matrix_second",
+      "link": false
     },
     {
-      "address": "0x001bf2d4",
-      "function": "badge_camera34"
+      "address": "0x354a00",
+      "function": "bind_world",
+      "link": false
     },
     {
-      "address": "0x001bf2f8",
-      "function": "badge_camera44"
+      "address": "0x354acc",
+      "function": "bind_view",
+      "link": false
     },
     {
-      "address": "0x001bf538",
-      "function": "badge_car_position"
+      "address": "0x349964",
+      "function": "allocate_hook",
+      "link": false
     },
     {
-      "address": "0x001bb678",
-      "function": "badge_back_render"
+      "address": "0x1e64e0",
+      "function": "destroy_hook",
+      "link": false
+    },
+    {
+      "address": "0x37afb4",
+      "function": "wait_for_vblank",
+      "link": false
+    },
+    {
+      "address": "0x1e2020",
+      "function": "scene_hook",
+      "link": false
+    },
+    {
+      "address": "0x1fd280",
+      "function": "camera_destroy_hook",
+      "link": false
+    },
+    {
+      "address": "0x34bd50",
+      "function": "effect_bind",
+      "link": false
+    },
+    {
+      "address": "0x34befc",
+      "function": "effect_first",
+      "link": true
+    },
+    {
+      "address": "0x34bf28",
+      "function": "effect_second",
+      "link": true
+    },
+    {
+      "address": "0x1bf2d4",
+      "function": "badge_camera34",
+      "link": true
+    },
+    {
+      "address": "0x1bf2f8",
+      "function": "badge_camera44",
+      "link": true
+    },
+    {
+      "address": "0x1bf538",
+      "function": "badge_car_position",
+      "link": true
+    },
+    {
+      "address": "0x1bb678",
+      "function": "badge_back_render",
+      "link": false
+    },
+    {
+      "address": "0x16c014",
+      "function": "sync_motion_blur_alpha",
+      "link": true
+    },
+    {
+      "address": "0x16c0f4",
+      "function": "sync_motion_blur_alpha",
+      "link": true
     }
   ],
-  "glare_disabled_entries": [
-    "0x0013886c",
-    "0x00138abc"
+  "debug_disabled_entries": [
+    "0x15feb8",
+    "0x1701b0",
+    "0x17b694",
+    "0x17c0a8",
+    "0x18a614",
+    "0x1ac784",
+    "0x1b5a18",
+    "0x2993e0"
+  ],
+  "debug_row_entries": [
+    "0x2996c0",
+    "0x299928",
+    "0x299be0"
+  ],
+  "bloom_disabled_entries": [
+    "0x13886c",
+    "0x138abc"
+  ],
+  "motion_blur_disabled_entries": [
+    "0x16bba0",
+    "0x16beac",
+    "0x16bf24",
+    "0x16bfe0",
+    "0x16c0c0"
   ]
 }

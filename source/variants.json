@@ -1,0 +1,26 @@
+{
+  "standard": {
+    "remove_bloom": false,
+    "remove_motion_blur": false,
+    "text_sha256": "e4eaedc4660a2493962a1b3f752b7122efa9f488eab457a1d50fbb0f026e0428",
+    "ips_sha256": "11c9e95024408384ff997df2fc98be86fe6a28b728acbb382e67fad704ce9440"
+  },
+  "no-bloom": {
+    "remove_bloom": true,
+    "remove_motion_blur": false,
+    "text_sha256": "8c05ae9646247e4703553bbfccb8c037953626ffd279f4b1dc02b3739476275f",
+    "ips_sha256": "a57df4f425ede1bbff565279a55d56ce7d69841c2f37cb8e5ae939e424e6c2af"
+  },
+  "no-motion-blur": {
+    "remove_bloom": false,
+    "remove_motion_blur": true,
+    "text_sha256": "3b48e47e8f8bd2ca0abedca69589618624e1d228a1a4312077b7c57b3b08f10a",
+    "ips_sha256": "623ccc31b0b492df1a5a1cc4d8f24e1bb217a534f12c36eafcda0ab5700e7308"
+  },
+  "no-bloom-no-motion-blur": {
+    "remove_bloom": true,
+    "remove_motion_blur": true,
+    "text_sha256": "c5ba9e977621e8a640eb2b6a9af7faa66dda3dae4ceca03b0e57e1904e0ef864",
+    "ips_sha256": "5f7a16e42bbc124d36d9e126b1d64f87fc6393de59953436c37f351e6183dda4"
+  }
+}

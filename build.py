@@ -1,6 +1,7 @@
 """Build the USA revision 0 patch from the original game and base IPS."""
 import argparse
 import hashlib
+import json
 import os
 from pathlib import Path
 import struct
@@ -12,9 +13,8 @@ TEXT_SIZE = 0x27B000
 TITLE_ID = "0004000000035800"
 CODE_SHA256 = "a128741ca5b0ace56534c937f59164dc16f8c39e957a07c5a6c2fc824dd229b8"
 BASE_IPS_SHA256 = "5494759a0ebd2b84c6350376a2c187a1bdbd87d7db9abc8903f2ed3372395e8b"
-TEXT_SHA256 = "b74b40f1bac08cd7098e018410e6d796e3f667ac236411443ebac1f0b8b886b9"
-IPS_SHA256 = "9e4e5f530c9d3514367262cc7ee3bf181a065fd5b8d7fb2fffe673c93822396a"
 HEADER_SHA256 = "1efdf2fe1675df1ba61872c51dfd21b9097c52ea5519297d2ef366fa27b769de"
+VARIANTS = json.loads((ROOT / "source/variants.json").read_text(encoding="utf-8"))
 
 
 def digest(data):
@@ -128,10 +128,10 @@ def build(args):
                for line in tool("nm", "mod.elf").splitlines() if len(line.split()) == 3}
     image = apply_ips(original, base_patch)
 
-    # Restore replaced base-patch stubs and the optional FPS-counter call.
-    for start, end in [(0x37AEAC, 0x37AED0), (0x37AF84, 0x37AF8C),
-                       (0x37AFB8, 0x37AFF0), (0x37AFF8, 0x37B000),
-                       (0x16BF14, 0x16BF24), (0x32C7F0, 0x32C7F4),
+    # Restore superseded stubs, native blur callbacks and the FPS-counter call.
+    for start, end in [(0x37AEAC, 0x37AF88), (0x37AFB8, 0x37AFF0),
+                       (0x37AFF8, 0x37B000), (0x16BBA0, 0x16C1A8),
+                       (0x32C7F0, 0x32C7F4),
                        (0x201174, 0x201178)]:
         image[start - BASE:end - BASE] = original[start - BASE:end - BASE]
     for section in sections:
@@ -144,30 +144,38 @@ def build(args):
     # All phase readers share the reserved BSS state at this base address.
     for address in (0x3337E0, 0x37AFF4):
         write_word(image, address, 0x47D000)
-    for address in (0x13886C, 0x138ABC, 0x15FEB8, 0x16BBA0, 0x16BEAC,
-                    0x16BF24, 0x16BFE0, 0x16C0C0, 0x17C0A8, 0x18A614, 0x1AC784):
-        write_word(image, address, 0xE12FFF1E)
-    hooks = [(0x32C1FC, "frame_hook", True), (0x245E78, "matrix_first", False),
-             (0x245E40, "matrix_second", False), (0x354A00, "bind_world", False),
-             (0x354ACC, "bind_view", False), (0x349964, "allocate_hook", False),
-             (0x1E64E0, "destroy_hook", False), (0x37AFB4, "wait_for_vblank", False),
-             (0x1E2020, "scene_hook", False), (0x1FD280, "camera_destroy_hook", False),
-             (0x34BD50, "effect_bind", False), (0x34BEFC, "effect_first", True),
-             (0x34BF28, "effect_second", True), (0x1BF2D4, "badge_camera34", True),
-             (0x1BF2F8, "badge_camera44", True), (0x1BF538, "badge_car_position", True),
-             (0x1BB678, "badge_back_render", False)]
-    for address, name, link in hooks:
-        write_word(image, address, branch(address, symbols[name], link))
-    checked(image[:TEXT_SIZE], TEXT_SHA256, "Rebuilt executable text")
-    patch = checked(make_ips(original, image), IPS_SHA256, "Rebuilt IPS")
-    if apply_ips(original, patch) != image:
-        raise ValueError("IPS round-trip mismatch")
+    hooks = json.loads((source / "hooks.json").read_text(encoding="utf-8"))
+    for address in hooks["debug_disabled_entries"]:
+        write_word(image, int(address, 16), 0xE12FFF1E)
+    for address in hooks["debug_row_entries"]:
+        # A retired diagnostic printer consumes no output rows.
+        write_word(image, int(address, 16), 0xE1A00001)
+        write_word(image, int(address, 16) + 4, 0xE12FFF1E)
+    for hook in hooks["hooks"]:
+        address = int(hook["address"], 16)
+        write_word(image, address, branch(address, symbols[hook["function"]], hook["link"]))
 
-    destination = output / TITLE_ID
-    destination.mkdir(exist_ok=True)
-    (destination / "code.ips").write_bytes(patch)
-    (destination / "exheader.bin").write_bytes(header)
-    print(f"Verified release bytes written to {destination}")
+    outputs = []
+    selected = VARIANTS if args.variant == "all" else [args.variant]
+    for name in selected:
+        settings = VARIANTS[name]
+        variant = bytearray(image)
+        for effect in ("bloom", "motion_blur"):
+            if settings["remove_" + effect]:
+                for address in hooks[effect + "_disabled_entries"]:
+                    write_word(variant, int(address, 16), 0xE12FFF1E)
+        checked(variant[:TEXT_SIZE], settings["text_sha256"], name + " executable text")
+        patch = checked(make_ips(original, variant), settings["ips_sha256"], name + " IPS")
+        if apply_ips(original, patch) != variant:
+            raise ValueError(name + " IPS round-trip mismatch")
+        outputs.append((name, patch))
+
+    for name, patch in outputs:
+        destination = output / name / TITLE_ID
+        destination.mkdir(parents=True, exist_ok=True)
+        (destination / "code.ips").write_bytes(patch)
+        (destination / "exheader.bin").write_bytes(header)
+        print(f"Verified {name} release bytes written to {destination}")
 
 
 def main():
@@ -176,6 +184,8 @@ def main():
     parser.add_argument("--exheader", type=Path, required=True, help="Original 2048-byte game exheader")
     parser.add_argument("--base-ips", type=Path, required=True, help="AEONG_AEONG's crash-fix IPS")
     parser.add_argument("--toolchain", type=Path, help="Directory containing arm-none-eabi tools")
+    parser.add_argument("--variant", choices=[*VARIANTS, "all"], default="standard",
+                        help="Post-processing variant to build (default: standard)")
     parser.add_argument("--output", type=Path, default=ROOT / "build")
     args = parser.parse_args()
     try:

@@ -237,3 +237,26 @@ camera_destroy_hook:
     pop {r0-r3,ip,lr}
     push {r4-r10,lr}
     b 0x1fd284
+
+.section .text.sync_motion_blur_alpha,"ax"
+.global sync_motion_blur_alpha
+sync_motion_blur_alpha:
+    @ Keep both blur quads synchronized on endpoint frames.
+    ldr ip, =0x47cfc4
+    ldr ip, [ip]
+    cmp ip, #2
+    bne 0x287e74
+    push {r4,lr}
+    add ip, r5, #0xc00
+    vldr s0, [ip, #0xb4]
+    add ip, r4, #0x1d000
+    ldr r0, [ip, #0xe88]
+    bl 0x27dd94
+    add ip, r5, #0xc00
+    vldr s0, [ip, #0xb4]
+    add ip, r4, #0x1d000
+    ldr r0, [ip, #0xe8c]
+    bl 0x27dd94
+    pop {r4,lr}
+    b 0x287e74
+.ltorg

@@ -3,11 +3,11 @@
 Rendering and animation corrections for the USA revision 0 game, based on
 [AEONG_AEONG's 60 FPS and crash-fix patch](https://gbatemp.net/threads/i-created-a-60-fps-patch-for-ridge-racer-3d-on-the-3ds.684957/).
 
-**[Download the tested patch](https://github.com/Starlightbotanist/ridge-racer-3d-60fps/releases/latest)**
+**[Download the patch](https://github.com/Starlightbotanist/ridge-racer-3d-60fps/releases/latest)**
 
 Target: **USA revision 0**, product code `CTR-P-ARRE`, title ID `0004000000035800`.
 This repository contains the added C/ARM routines, their linker layout, a build
-script, and the tested IPS/header pair. It does not contain the game executable,
+script, and four IPS/header variants. It does not contain the game executable,
 assets, saves, or the original author's complete source.
 
 ## Changes
@@ -17,11 +17,29 @@ assets, saves, or the original author's complete source.
 - Keeps nitrous effect world, inverse-world and camera transforms consistent between frames.
 - Interpolates rival badge positions above cars and at the screen edge.
 - Separates transform history by object and render context, invalidates reused allocations, and handles missing or ambiguous history.
-- Disables motion blur and full-screen bloom/glare.
+- Retains AEONG_AEONG's file-read queue crash correction.
 
 The optional hold-SELECT FPS counter is removed. The lower screen, menus and
 pause screens retain their native 30 FPS rendering. The additional BSS memory
 reservation is 200 KiB.
+
+## Choose a version
+
+Every version includes the same timing, camera, effect, badge and crash fixes.
+The standard version retains the game's bloom/glare and motion blur.
+
+| Version | Bloom/glare | Motion blur | Release archive |
+| --- | --- | --- | --- |
+| Standard (default) | Retained | Retained | `ridge-racer-3d-usa-60fps.zip` |
+| No bloom | Removed | Retained | `ridge-racer-3d-usa-60fps-no-bloom.zip` |
+| No motion blur | Retained | Removed | `ridge-racer-3d-usa-60fps-no-motion-blur.zip` |
+| No bloom or motion blur | Removed | Removed | `ridge-racer-3d-usa-60fps-no-bloom-no-motion-blur.zip` |
+
+Use one version at a time. Each archive contains the complete `code.ips` and
+`exheader.bin` pair; the optional versions replace the standard version.
+"No bloom or motion blur" retains the effect settings of the previous release.
+The loose release assets and the repository's `0004000000035800` folder are
+the standard version. The other pairs are under `variants` in the repository.
 
 ## Install in Azahar
 
@@ -52,8 +70,8 @@ The build requires Python 3, devkitARM, and these locally supplied inputs:
 
 The original IPS is an input dependency; it is not included here. The build
 overlays the assembled routines and native hooks on that patch. The script
-checks input hashes and verifies that the output exactly matches the tested
-release before writing the installable files.
+checks input hashes and verifies each variant's release hashes before writing
+the installable files. All variants share one compiled code layout.
 
 Native Windows PowerShell example:
 
@@ -65,7 +83,10 @@ python .\build.py `
   --toolchain 'C:\devkitPro\devkitARM\bin'
 ```
 
-The output goes to `build/0004000000035800`. The tested toolchain is
+The default output goes to `build/standard/0004000000035800`. Select another
+version with `--variant no-bloom`, `--variant no-motion-blur`, or
+`--variant no-bloom-no-motion-blur`; `--variant all` builds all four pairs.
+The tested toolchain is
 **devkitARM release 47, GCC 7.1.0**. The fixed linker layout guards routine
 sizes. A different compiler or a source change may require updating the layout
 and release identities before producing a different build.
@@ -79,16 +100,18 @@ Source files:
 | `source/hooks.s` | Native entry hooks, camera view reconstruction and object lifetime handling |
 | `source/wait.s` | VBlank wait with counter wrap/reset handling |
 | `source/layout.ld` | Fixed code placement and section-size checks |
+| `source/hooks.json`, `source/variants.json` | Native hooks, effect selection and release hashes |
 | `build.py` | Input validation, compilation, patch assembly and output verification |
 
 ## Validation and limits
 
-The tested release has Windows Azahar coverage with Vulkan and OpenGL, including
-4x tunnel drifts, blue and single-button nitrous, badge movement, native race
-restart, pause/resume, and race exit. Simulation timing, helicopter animation
-rate, and sampled car/wheel transforms were compared with the original 30 FPS
-game. [TESTING.txt](TESTING.txt) records the conditions and limits;
-[MANIFEST.json](MANIFEST.json) records the checked-in file hashes and the release archive hash.
+The shared interpolation routines have compiled ARM coverage for camera poses,
+affine transforms, object ownership, invalidation, animation stepping, effect
+matrices and both badge consumers. The relocated blur-alpha helper is checked
+against the original author's implementation. Each variant's binary is checked
+to differ only at its selected post-processing callback entries.
+[TESTING.txt](TESTING.txt) records gameplay conditions and limits;
+[MANIFEST.json](MANIFEST.json) records the checked-in file hashes.
 
 The lower screen intentionally remains at 30 FPS, including minimap markers.
 Every course, vehicle, particle effect and nitrous type has not been covered.

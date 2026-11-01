@@ -1,73 +1,62 @@
-Validation - USA 60 FPS effects fix
+Validation - Ridge Racer 3D USA 60 FPS variants
 
-Mapped text SHA256: b74b40f1bac08cd7098e018410e6d796e3f667ac236411443ebac1f0b8b886b9
-IPS SHA256: 9e4e5f530c9d3514367262cc7ee3bf181a065fd5b8d7fb2fffe673c93822396a
-Header SHA256: 1efdf2fe1675df1ba61872c51dfd21b9097c52ea5519297d2ef366fa27b769de
+Target: USA revision 0, CTR-P-ARRE, title 0004000000035800.
+Build identities are recorded in source/variants.json and MANIFEST.json.
 
-Windows native automated Azahar; NVIDIA RTX 3050 Ti Laptop GPU, driver 546.30.
-USA Standard Race, Category 4, Seacrest District, Fiera, stereo disabled,
-no texture filter. Visual captures use actual 4x internal resolution (1600x960
-upper screen). Sunset Drive is used for the helicopter rate comparison.
+Windows native headless Azahar; NVIDIA RTX 3050 Ti Laptop GPU, driver 546.30.
+Standard Race, Category 4, Seacrest District, Fiera. Stereo disabled;
+no texture filter; actual 4x internal resolution (1600x960 upper screen).
 
-Comparison                             Original 30 FPS   Released drift fix 4f5   Effects fix b74
-Blue nitrous during fast drift         Attached pair     Displaced between frames Attached pair, VK/GL
-Forward and screen-edge badge movement Native 30 Hz      Repeats on inserted frame Intermediate positions
-Car/body and wheel native endpoints    Reference         Unmeasured this round    Exact at 2 sampled clocks
-Simulation/animation progression       Reference         Unmeasured this round    Same measured rates
+Each variant was cold booted separately on Vulkan and OpenGL using the
+regular USA save. No emulator save state was loaded. Each run entered a
+race through the menus, activated L+R nitrous with a private one-time
+full-charge fixture, steered/braked, and verified that pausing stopped
+the race clock. The charge fixture is not included in the patch.
 
-The 30 FPS reference disables blur; the cadence reference also disables glare.
-The prior released patch and this patch both disable blur and glare. The nitro
-comparison uses the same USA checkpoint with a one-time full-charge fixture;
-no charge cheat or test fixture is included in the patch. Steering inputs
-produce fast tunnel/gallery drifts, but are not frame-identical between clips.
+Each timing sample spans 240 emulated display ticks. Cells show upper-
+screen render count / race-clock advance. These are emulated timing
+checks, not wall-clock performance benchmarks.
 
-Final 4x capture coverage:
-  Vulkan: blue L+R nitrous drift (120 frames); no-nitrous drift (90 frames).
-  OpenGL: blue L+R drift (120); single-R/orange-flame drift (60);
-          straight driving after a native race restart (60).
-Each capture retains consecutive render generations and both render phases.
-Inspected consecutive frame pairs show two attached flames with both nitrous
-levels; the no-nitrous case has no added flames. This is sampled frame evidence,
-not an exhaustive check of every frame, vehicle, course or nitrous type.
+Version                     Bloom/glare   Motion blur   VK renders/clock  GL renders/clock
+Standard (default)          Retained      Retained      240/+6000         240/+6000
+No bloom                    Removed       Retained      240/+6000         240/+6000
+No motion blur              Retained      Removed       240/+6000         239/+6000
+No bloom or motion blur     Removed       Removed       240/+6000         239/+5950
 
-Actual indexed GPU vertex inputs, Vulkan 1x: both an overhead name badge and a
-screen-edge label move on the inserted frame. Six native endpoints match the
-released patch exactly. Four intermediate positions match their endpoint
-midpoints within 0.000275 game units (billboard orientation also changes).
-Two first-frame cases correctly use the native position without prior history.
-The screen-edge result is also visible in 4x image captures. This verifies
-badge movement; it does not assert that every sprite's artwork animates at 60 Hz.
+The native nitrous-trigger entry was reached in every run. Blur-enabled
+builds had two allocated blur quads and positive opacity during nitrous;
+blur-removal builds had no allocated blur quads and zero opacity.
+Executable hashes were verified after boot and after the race sample.
+Captured frame sequences contain consecutive generations and both
+render phases. The option matrix includes all four combinations.
 
-Final Vulkan 1x timing, over 240 display ticks:
-  Original reference: 120 renders, 120 simulation updates, +6000 race-clock units.
-  Effects fix b74:    240 renders, 120 simulation updates, +6000 race-clock units.
-Both stop the race clock while paused. Final Sunset Drive checks over 120
-LCD ticks show 60 helicopter animation frames in both methods, with rendering
-increased from 60 to 120. Nine native player body/wheel transforms match the
-30 FPS reference exactly at race clocks 5000 and 11000 after the native render.
-Debugger-stopped endpoint checks are not used as cadence evidence.
+Compiled ARM checks on the shared code:
+- 20 interpolation/lifecycle groups, including 512 independent affine
+  midpoint references across both native matrix-consumer layouts.
+- 14 independent camera-pose cases, including distant positions, angle
+  wrap, singular history, native endpoints and fallback recovery.
+- 12 effect/badge consumer groups, including actual native matrix
+  multiplication, both camera-copy formats, stale upload mirrors,
+  pending deletion, hidden badges, worker bypass and pending uploads.
+- Native scene animation stepping and ten VBlank wrap/reset cases.
+- 18 executions comparing the relocated blur-alpha helper with AEONG's
+  implementation at phases 0/1/2 and three opacity values.
 
-Compiled ARM validation: 20 existing interpolation/lifecycle test groups,
-14 independent camera-pose consumer cases, and 12 effect/badge consumer groups.
-Covered ownership, worker bypass, source reuse, invalidation, ambiguous writes,
-missing history/fallback/recovery, full cache, native effect multiplications,
-both badge camera-copy formats, pending-deletion and hidden badges, unchanged
-position uploads, and restoring both the authoritative node and upload mirror.
-The screen-edge fixture deliberately starts with inconsistent node/mirror data
-and checks the renderer handoff; actual GPU inputs provide a separate check.
-Code storage and original branch/literal references were audited. The native
-glare render and update bodies are retired; GUI callbacks and literal pools
-remain intact. The new code reuses the existing 1024-entry cache and adds no
-allocation. A sampled post-drift cache contains 88 entries. Incremental CPU
-cost and Android performance have not been benchmarked; capture/tracing tools
-slow execution and are unsuitable for those measurements.
+Static and build checks:
+- 49 linked sections with no overlaps or unexplained original branch,
+  literal, address-construction or pointer references into reused code.
+- Shared interpolation code occupies diagnostic overlays; native bloom
+  and blur bodies are available independently of code placement.
+- Variant images differ only at the selected effect callback entries.
+- The queue crash correction, display-buffer rotation, live blur reset
+  and protected callback/literal locations are retained.
+- A clean source build reproduces all four checked-in patch pairs.
+- IPS round trips, header identity and package file hashes are checked.
 
-Final patch cold-boot text hashes match on both graphics backends. Vulkan
-normal-menu navigation into a race passes without any state load. OpenGL
-pause/resume, native race restart and return to visible Game Mode Select pass;
-the final text hash is rechecked after these transitions. These checks apply
-to b74, including its pending-deletion and unchanged-position guards.
+All variants use the same additional 200 KiB BSS reservation. The header
+preserves the game's original CPU and memory-mode flags. The FPS counter
+is removed, and the lower screen remains at its native 30 FPS.
 
-Android and physical 3DS are untested with this revision. Other regions,
-all badge visibility transitions, every nitrous type, every vehicle/course,
-and a full campaign are untested. Sprite artwork frame counts are unchanged.
+Android and physical 3DS are untested with these variants. Coverage does
+not include every course, vehicle, nitrous type, rare effect or a full
+campaign. Original sprite artwork frame counts are unchanged.

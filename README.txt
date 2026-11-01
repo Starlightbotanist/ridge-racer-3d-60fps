@@ -1,37 +1,46 @@
-Ridge Racer 3D USA - 60 FPS effects fix
+Ridge Racer 3D USA - 60 FPS
 
 Target: USA revision 0, CTR-P-ARRE, title 0004000000035800.
 
-Corrects displaced nitrous exhaust flames during drifts. Effect world, inverse
-world and camera transforms now use matching interpolation histories.
+Includes camera interpolation during turns and drifts, matching nitrous effect
+transforms, rival badge position interpolation, allocation/history handling,
+VBlank corrections and the original author's file-read queue crash fix.
+Simulation and animation retain their original progression rates. The lower
+screen, menus and pause screens remain at their native 30 FPS. The optional
+hold-SELECT FPS counter is removed.
 
-Adds position interpolation for rival badges, both above cars and at the screen
-edge. Their movement updates between simulation ticks without advancing their
-native animation or gameplay updates twice.
+Choose one archive
+  ridge-racer-3d-usa-60fps.zip
+    Standard: retains bloom/glare and motion blur.
+  ridge-racer-3d-usa-60fps-no-bloom.zip
+    Removes bloom/glare; retains motion blur.
+  ridge-racer-3d-usa-60fps-no-motion-blur.zip
+    Retains bloom/glare; removes motion blur.
+  ridge-racer-3d-usa-60fps-no-bloom-no-motion-blur.zip
+    Removes both effects, as in the previous release.
 
-Retains the camera-pose correction, original simulation/animation rates,
-motion-blur disable and full-screen bloom/glare disable. Menus and pause
-screens retain their native frame rate. The optional hold-SELECT FPS counter
-remains removed.
+Every version contains the complete patch and the same fixes. Install only
+one version. The loose release code.ips is the standard version; exheader.bin
+is identical in every version.
 
 Installation in Azahar
-1. Stop the game and disable other FPS, animation and motion-blur cheats/mods.
+1. Stop the game and disable other FPS, animation and post-processing mods.
 2. Remove the previous code.ips from both the title's mod folder and its exefs
-   subfolder. An older exefs/code.ips takes precedence over the title-folder file.
-3. Copy the included 0004000000035800 folder into the Azahar user folder's
-   load/mods directory. Both files are required:
+   subfolder. An existing exefs/code.ips takes precedence over the root file.
+3. Copy the chosen archive's 0004000000035800 folder into the Azahar user
+   folder's load/mods directory. Both files are required:
      load/mods/0004000000035800/code.ips
      load/mods/0004000000035800/exheader.bin
-4. Cold boot the USA game and use its regular game save. Do not load an emulator
-   save state containing code from a previous patch.
+4. Cold boot the USA game and use its regular save. Save states from another
+   patch can restore old executable code.
 
-The header retains the same additional 200 KiB of loader-owned BSS memory.
-CPU boost and memory-mode flags are unchanged. Remove both mod files to
-uninstall. Installing the patch does not modify the ROM or regular game save.
+The header reserves an additional 200 KiB of loader-owned BSS memory. CPU
+boost and memory-mode flags retain their original values. Remove both mod
+files to uninstall. The ROM and regular game save are not modified.
 
-See TESTING.txt for validation and limits. The source folder contains the added
-routines and their layout; it is not a complete reconstruction of the game or
-base patch. Extracted game code, saves and diagnostic tools are not included.
+README.md contains build instructions. TESTING.txt records validation and
+limits. Source and build files are included; game files and the original
+author's base IPS are not included.
 
 Base 60 FPS/crash-fix patch: AEONG_AEONG
 https://gbatemp.net/threads/i-created-a-60-fps-patch-for-ridge-racer-3d-on-the-3ds.684957/
