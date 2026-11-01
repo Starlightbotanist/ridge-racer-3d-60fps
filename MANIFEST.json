@@ -1,0 +1,175 @@
+{
+  "target": {
+    "title_id": "0004000000035800",
+    "product_code": "CTR-P-ARRE",
+    "region": "USA",
+    "revision": 0
+  },
+  "mapped_text_sha256": "b74b40f1bac08cd7098e018410e6d796e3f667ac236411443ebac1f0b8b886b9",
+  "original_code_sha256": "a128741ca5b0ace56534c937f59164dc16f8c39e957a07c5a6c2fc824dd229b8",
+  "extra_bss_bytes": 204800,
+  "cadence": [
+    {
+      "variant": "Original 30 FPS without blur/glare",
+      "text_sha256": "a7819ac2b32898abcb5ac2fe28661b732e597c36a6053ec69004e85eae15537e",
+      "delta": {
+        "lcd": 240,
+        "simulation_updates": 120,
+        "clock": 6000,
+        "rendered": 120
+      },
+      "pause_clock_change": 0
+    },
+    {
+      "variant": "Effect and HUD interpolation",
+      "text_sha256": "b74b40f1bac08cd7098e018410e6d796e3f667ac236411443ebac1f0b8b886b9",
+      "delta": {
+        "lcd": 240,
+        "simulation_updates": 120,
+        "clock": 6000,
+        "rendered": 240
+      },
+      "pause_clock_change": 0
+    }
+  ],
+  "badge_gpu_verification": {
+    "backend": "Vulkan",
+    "resolution": 1,
+    "consumer": "actual indexed GPU vertex inputs; world billboard and clamped screen label",
+    "baseline_text_sha256": "4f5af8bb4d8f4945437aadbf7f26bb4e9d5063f626646f7638b4f6b2aaa3bdae",
+    "candidate_text_sha256": "b74b40f1bac08cd7098e018410e6d796e3f667ac236411443ebac1f0b8b886b9",
+    "native_endpoints_equal": 6,
+    "intermediate_positions": 4,
+    "first_frame_fallbacks": 2,
+    "max_midpoint_error": 0.000274658203125,
+    "scope": "Three simulation ticks, two labels. Observer is unsuitable for performance measurement."
+  },
+  "visual_captures": [
+    {
+      "sequence": 513,
+      "backend": "Vulkan",
+      "workload": "Blue L+R nitrous drift",
+      "frames": 120,
+      "top_screen": [
+        1600,
+        960
+      ],
+      "consecutive_generations": true
+    },
+    {
+      "sequence": 514,
+      "backend": "Vulkan",
+      "workload": "No-nitrous drift",
+      "frames": 90,
+      "top_screen": [
+        1600,
+        960
+      ],
+      "consecutive_generations": true
+    },
+    {
+      "sequence": 515,
+      "backend": "OpenGL",
+      "workload": "Blue L+R nitrous drift",
+      "frames": 120,
+      "top_screen": [
+        1600,
+        960
+      ],
+      "consecutive_generations": true
+    },
+    {
+      "sequence": 516,
+      "backend": "OpenGL",
+      "workload": "Single-R nitrous drift",
+      "frames": 60,
+      "top_screen": [
+        1600,
+        960
+      ],
+      "consecutive_generations": true
+    },
+    {
+      "sequence": 517,
+      "backend": "OpenGL",
+      "workload": "Straight after native race restart",
+      "frames": 60,
+      "top_screen": [
+        1600,
+        960
+      ],
+      "consecutive_generations": true
+    }
+  ],
+  "files": {
+    ".gitattributes": {
+      "bytes": 55,
+      "sha256": "9f40a29843da7fef1acb4790054783370a1ab8fd8e7490f5aee241953be849ed"
+    },
+    ".gitignore": {
+      "bytes": 64,
+      "sha256": "bf879003fa1e04bee40a498305501b12c2f74270300f95afd94448bb5a5facd7"
+    },
+    "0004000000035800/code.ips": {
+      "bytes": 5477,
+      "sha256": "9e4e5f530c9d3514367262cc7ee3bf181a065fd5b8d7fb2fffe673c93822396a"
+    },
+    "0004000000035800/exheader.bin": {
+      "bytes": 2048,
+      "sha256": "1efdf2fe1675df1ba61872c51dfd21b9097c52ea5519297d2ef366fa27b769de"
+    },
+    "README.md": {
+      "bytes": 4861,
+      "sha256": "9c1c87c797f0beb02c80ac7253d51ca63d3564c777e732803ce1833023474c17"
+    },
+    "README.txt": {
+      "bytes": 1900,
+      "sha256": "c07c1c4c7fbfe72cf3ccb528ebfc5f32adf1c511c758ad86f18750c62b667979"
+    },
+    "TESTING.txt": {
+      "bytes": 4831,
+      "sha256": "4fe7e0ff0e5855914bf93b2c018cd30915f9b7cbcfaa856a6da194984fc0cce2"
+    },
+    "build.py": {
+      "bytes": 8581,
+      "sha256": "1edb26972a9afe75809847f3e6e85fe5b144363a65c5c26f451556826ce01160"
+    },
+    "source/affine.c": {
+      "bytes": 5883,
+      "sha256": "1761d27eb5da9f5933ab8df375235df0d10c0f87d3d0db54e4926462421323b4"
+    },
+    "source/cache.c": {
+      "bytes": 9967,
+      "sha256": "163fc4934af884127029552e40eadb49fdedb26385868cd390d6f9ae9062338c"
+    },
+    "source/hooks.json": {
+      "bytes": 644,
+      "sha256": "e5ee551834f7d81e0db2f7725769d5a49c353f132f7321cc9184aa52c09495d0"
+    },
+    "source/hooks.s": {
+      "bytes": 4387,
+      "sha256": "c5e76e420503ad443c0d19a22571ac10fb2ea9a1056d8ccd11dd799f99a169a9"
+    },
+    "source/layout.ld": {
+      "bytes": 6367,
+      "sha256": "9a75045afcd41a757437763f997d2f085f0df89cecf8072da325cfc60623a789"
+    },
+    "source/matrix.h": {
+      "bytes": 259,
+      "sha256": "c5fee78ca736d195633c8c95dc1974ee774e516ba4455840727d0ee4e387ed8f"
+    },
+    "source/quaternion.s": {
+      "bytes": 709,
+      "sha256": "dfca18a7f87b8444b7cf41399aad7b96bb0e1a197572e2e87879a98cf8da3c3e"
+    },
+    "source/wait.s": {
+      "bytes": 495,
+      "sha256": "101ffd6f0f8693426f4f101eaff7f0423cdfc161b61313b1bed7e2f2c17bc024"
+    }
+  },
+  "release_archive": {
+    "name": "ridge-racer-3d-usa-60fps-effects-fix.zip",
+    "bytes": 18647,
+    "sha256": "f0d7fa480e93813bceb54de6838bcd6ee40ec5a1e321b00c4ef8b47f38c48c62"
+  }
+}

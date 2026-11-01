@@ -1,0 +1,73 @@
+Validation - USA 60 FPS effects fix
+
+Mapped text SHA256: b74b40f1bac08cd7098e018410e6d796e3f667ac236411443ebac1f0b8b886b9
+IPS SHA256: 9e4e5f530c9d3514367262cc7ee3bf181a065fd5b8d7fb2fffe673c93822396a
+Header SHA256: 1efdf2fe1675df1ba61872c51dfd21b9097c52ea5519297d2ef366fa27b769de
+
+Windows native automated Azahar; NVIDIA RTX 3050 Ti Laptop GPU, driver 546.30.
+USA Standard Race, Category 4, Seacrest District, Fiera, stereo disabled,
+no texture filter. Visual captures use actual 4x internal resolution (1600x960
+upper screen). Sunset Drive is used for the helicopter rate comparison.
+
+Comparison                             Original 30 FPS   Released drift fix 4f5   Effects fix b74
+Blue nitrous during fast drift         Attached pair     Displaced between frames Attached pair, VK/GL
+Forward and screen-edge badge movement Native 30 Hz      Repeats on inserted frame Intermediate positions
+Car/body and wheel native endpoints    Reference         Unmeasured this round    Exact at 2 sampled clocks
+Simulation/animation progression       Reference         Unmeasured this round    Same measured rates
+
+The 30 FPS reference disables blur; the cadence reference also disables glare.
+The prior released patch and this patch both disable blur and glare. The nitro
+comparison uses the same USA checkpoint with a one-time full-charge fixture;
+no charge cheat or test fixture is included in the patch. Steering inputs
+produce fast tunnel/gallery drifts, but are not frame-identical between clips.
+
+Final 4x capture coverage:
+  Vulkan: blue L+R nitrous drift (120 frames); no-nitrous drift (90 frames).
+  OpenGL: blue L+R drift (120); single-R/orange-flame drift (60);
+          straight driving after a native race restart (60).
+Each capture retains consecutive render generations and both render phases.
+Inspected consecutive frame pairs show two attached flames with both nitrous
+levels; the no-nitrous case has no added flames. This is sampled frame evidence,
+not an exhaustive check of every frame, vehicle, course or nitrous type.
+
+Actual indexed GPU vertex inputs, Vulkan 1x: both an overhead name badge and a
+screen-edge label move on the inserted frame. Six native endpoints match the
+released patch exactly. Four intermediate positions match their endpoint
+midpoints within 0.000275 game units (billboard orientation also changes).
+Two first-frame cases correctly use the native position without prior history.
+The screen-edge result is also visible in 4x image captures. This verifies
+badge movement; it does not assert that every sprite's artwork animates at 60 Hz.
+
+Final Vulkan 1x timing, over 240 display ticks:
+  Original reference: 120 renders, 120 simulation updates, +6000 race-clock units.
+  Effects fix b74:    240 renders, 120 simulation updates, +6000 race-clock units.
+Both stop the race clock while paused. Final Sunset Drive checks over 120
+LCD ticks show 60 helicopter animation frames in both methods, with rendering
+increased from 60 to 120. Nine native player body/wheel transforms match the
+30 FPS reference exactly at race clocks 5000 and 11000 after the native render.
+Debugger-stopped endpoint checks are not used as cadence evidence.
+
+Compiled ARM validation: 20 existing interpolation/lifecycle test groups,
+14 independent camera-pose consumer cases, and 12 effect/badge consumer groups.
+Covered ownership, worker bypass, source reuse, invalidation, ambiguous writes,
+missing history/fallback/recovery, full cache, native effect multiplications,
+both badge camera-copy formats, pending-deletion and hidden badges, unchanged
+position uploads, and restoring both the authoritative node and upload mirror.
+The screen-edge fixture deliberately starts with inconsistent node/mirror data
+and checks the renderer handoff; actual GPU inputs provide a separate check.
+Code storage and original branch/literal references were audited. The native
+glare render and update bodies are retired; GUI callbacks and literal pools
+remain intact. The new code reuses the existing 1024-entry cache and adds no
+allocation. A sampled post-drift cache contains 88 entries. Incremental CPU
+cost and Android performance have not been benchmarked; capture/tracing tools
+slow execution and are unsuitable for those measurements.
+
+Final patch cold-boot text hashes match on both graphics backends. Vulkan
+normal-menu navigation into a race passes without any state load. OpenGL
+pause/resume, native race restart and return to visible Game Mode Select pass;
+the final text hash is rechecked after these transitions. These checks apply
+to b74, including its pending-deletion and unchanged-position guards.
+
+Android and physical 3DS are untested with this revision. Other regions,
+all badge visibility transitions, every nitrous type, every vehicle/course,
+and a full campaign are untested. Sprite artwork frame counts are unchanged.

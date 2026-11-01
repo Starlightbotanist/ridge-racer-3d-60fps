@@ -1,0 +1,7 @@
+/build/
+/inputs/
+__pycache__/
+*.pyc
+*.o
+*.elf
+*code-private.bin

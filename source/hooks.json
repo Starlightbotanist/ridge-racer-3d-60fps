@@ -1,0 +1,36 @@
+{
+  "hooks": [
+    {
+      "address": "0x0034bd50",
+      "function": "effect_bind"
+    },
+    {
+      "address": "0x0034befc",
+      "function": "effect_first"
+    },
+    {
+      "address": "0x0034bf28",
+      "function": "effect_second"
+    },
+    {
+      "address": "0x001bf2d4",
+      "function": "badge_camera34"
+    },
+    {
+      "address": "0x001bf2f8",
+      "function": "badge_camera44"
+    },
+    {
+      "address": "0x001bf538",
+      "function": "badge_car_position"
+    },
+    {
+      "address": "0x001bb678",
+      "function": "badge_back_render"
+    }
+  ],
+  "glare_disabled_entries": [
+    "0x0013886c",
+    "0x00138abc"
+  ]
+}
